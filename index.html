@@ -19,7 +19,7 @@
         }
         .container {
             flex: 1;
-            padding-bottom: 60px; /* 为了避免内容被底部栏遮挡，留出一些空间 */
+            padding-bottom: 60px;
         }
         .navbar {
             background-color: #343a40;
@@ -45,8 +45,6 @@
             background-color: #343a40;
             color: white;
             padding: 20px 0;
-            position: relative; /* 改为 relative，避免覆盖内容 */
-            left: 0;
             width: 100%;
             text-align: center;
         }
@@ -86,13 +84,13 @@
                     </div>
                 </div>
 
-                <!-- Deposit Tokens -->
+                <!-- Store Tokens Section: Allow users to mint tokens -->
                 <div class="card p-4">
                     <h3 class="card-title text-center">Store Tokens</h3>
-                    <div id="deposit">
-                        <input type="text" id="depositAmount" placeholder="Amount to deposit" class="form-control mb-2">
-                        <button class="btn btn-primary w-100" id="depositBtn">
-                            <i class="fas fa-save"></i> Store
+                    <div id="mint">
+                        <input type="text" id="mintAmount" placeholder="Amount to mint" class="form-control mb-2">
+                        <button class="btn btn-success w-100" id="mintTokensBtn">
+                            <i class="fas fa-coins"></i> Mint Tokens
                         </button>
                     </div>
                 </div>
@@ -169,6 +167,7 @@
 
     <!-- Web3.js -->
     <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.4/dist/ethers.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
