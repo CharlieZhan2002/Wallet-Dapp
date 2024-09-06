@@ -3,45 +3,8 @@ let web3;
 let contract;
 let account;
 
-const contractAddress = "0x2c5BFcaCA13fFb7B8C79C009918CE665d4aa79A1";  
+const contractAddress = "0xa2F715eb41737A24059e4300Cf6d817589AAb6cF";  
 const abi = [
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "deposit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
 	{
 		"inputs": [
 			{
@@ -257,73 +220,6 @@ const abi = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "deadline",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint8",
-				"name": "v",
-				"type": "uint8"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "r",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "s",
-				"type": "bytes32"
-			}
-		],
-		"name": "permit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -349,32 +245,16 @@ const abi = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
+		"inputs": [],
+		"name": "DOMAIN_SEPARATOR",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "bytes32",
 				"name": "",
-				"type": "bool"
+				"type": "bytes32"
 			}
 		],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -399,6 +279,30 @@ const abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -434,16 +338,16 @@ const abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "DOMAIN_SEPARATOR",
-		"outputs": [
+		"inputs": [
 			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"name": "depositAndMint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -535,6 +439,49 @@ const abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "deadline",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "s",
+				"type": "bytes32"
+			}
+		],
+		"name": "permit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "symbol",
 		"outputs": [
@@ -559,6 +506,59 @@ const abi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ];
 
@@ -570,10 +570,13 @@ async function connectWallet() {
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             account = (await web3.eth.getAccounts())[0];
             document.getElementById("account").innerText = account;
-            
+
             // 使用你的 MyToken 合约地址
-            const contractAddress = '0x2c5BFcaCA13fFb7B8C79C009918CE665d4aa79A1';
+            const contractAddress = '0xa2F715eb41737A24059e4300Cf6d817589AAb6cF';
             contract = new web3.eth.Contract(abi, contractAddress);
+
+            // 自动添加代币到 MetaMask
+            await addTokenToMetaMask();
 
             // 刷新页面数据
             await refreshPageData();
@@ -602,6 +605,22 @@ async function getTokenBalance() {
     }
 }
 
+// 铸造并存入代币功能
+async function depositAndMintTokens() {
+    const depositAmount = document.getElementById("depositAmount").value;
+
+    if (contract && account) {
+        const amountInWei = web3.utils.toWei(depositAmount, 'ether');
+
+        // 调用合约中的 depositAndMint 函数，直接铸造并存入代币
+        await contract.methods.depositAndMint(amountInWei).send({ from: account });
+
+        alert("Deposit and mint successful!");
+    } else {
+        alert("Please connect your wallet first.");
+    }
+}
+
 // 转账代币
 async function transferTokens() {
     const recipient = document.getElementById("recipient").value;
@@ -614,7 +633,7 @@ async function transferTokens() {
     }
 }
 
-// 检查授权
+// 检查授权并更新授权账户下拉列表
 async function checkAllAllowances() {
     if (contract && account) {
         // 清空现有的授权信息
@@ -703,7 +722,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // 事件监听器
 document.getElementById("connectWalletBtn").addEventListener("click", connectWallet);
 document.getElementById("getBalanceBtn").addEventListener("click", getTokenBalance);
+document.getElementById("depositBtn").addEventListener("click", depositAndMintTokens);
 document.getElementById("transferBtn").addEventListener("click", transferTokens);
 document.getElementById("checkAllowanceBtn").addEventListener("click", checkAllAllowances);
 document.getElementById("transferFromBtn").addEventListener("click", transferFrom);
-
