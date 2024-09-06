@@ -3,7 +3,7 @@ let web3;
 let contract;
 let account;
 
-const contractAddress = "0x797AC47773660843eBD6ED7Fc6bC116dA589Fcba";  
+const contractAddress = "0x2c5BFcaCA13fFb7B8C79C009918CE665d4aa79A1";  
 const abi = [
 	{
 		"inputs": [
@@ -26,6 +26,19 @@ const abi = [
 				"type": "bool"
 			}
 		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "deposit",
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -471,6 +484,19 @@ const abi = [
 				"internalType": "uint256[]",
 				"name": "extensions",
 				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getContractBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
