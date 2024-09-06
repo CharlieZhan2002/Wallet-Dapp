@@ -562,7 +562,7 @@ const abi = [
 	}
 ];
 
-// Connect MetaMask wallet
+// MetaMask 钱包连接
 async function connectWallet() {
     if (window.ethereum) {
         web3 = new Web3(window.ethereum);
@@ -570,6 +570,9 @@ async function connectWallet() {
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             account = (await web3.eth.getAccounts())[0];
             document.getElementById("account").innerText = account;
+            
+            // 使用你的 MyToken 合约地址
+            const contractAddress = '0x2c5BFcaCA13fFb7B8C79C009918CE665d4aa79A1';
             contract = new web3.eth.Contract(abi, contractAddress);
 
             // 刷新页面数据
@@ -582,16 +585,16 @@ async function connectWallet() {
     }
 }
 
-// 刷新页面上的数据
+// 刷新页面数据
 async function refreshPageData() {
     // 获取代币余额
     await getTokenBalance();
 
-    // 获取授权信息（如Check Allowance功能）
+    // 获取授权信息
     await checkAllAllowances();
 }
 
-// Get Token Balance
+// 获取代币余额
 async function getTokenBalance() {
     if (contract && account) {
         const balance = await contract.methods.balanceOf(account).call();
@@ -599,7 +602,7 @@ async function getTokenBalance() {
     }
 }
 
-// Transfer Tokens
+// 转账代币
 async function transferTokens() {
     const recipient = document.getElementById("recipient").value;
     const amount = document.getElementById("amount").value;
@@ -611,137 +614,53 @@ async function transferTokens() {
     }
 }
 
-// Permit Transfer (ERC20 Permit)
-async function permitTransfer() {
-    const permitRecipient = document.getElementById("permitRecipient").value;
-    const permitAmount = web3.utils.toWei(document.getElementById("permitAmount").value, 'ether');
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 60;  // Permit valid for 1 hour from now
-
-    try {
-        const chainId = await web3.eth.getChainId();
-        let nonce = await contract.methods.nonces(account).call();
-
-        const domain = {
-            name: await contract.methods.name().call(),
-            version: "1",
-            chainId: chainId,
-            verifyingContract: contractAddress
-        };
-
-        const types = {
-            EIP712Domain: [
-                { name: "name", type: "string" },
-                { name: "version", type: "string" },
-                { name: "chainId", type: "uint256" },
-                { name: "verifyingContract", type: "address" }
-            ],
-            Permit: [
-                { name: "owner", type: "address" },
-                { name: "spender", type: "address" },
-                { name: "value", type: "uint256" },
-                { name: "nonce", type: "uint256" },
-                { name: "deadline", type: "uint256" }
-            ]
-        };
-
-        const message = {
-            owner: account,
-            spender: permitRecipient,
-            value: permitAmount.toString(),   // Convert BigInt to string
-            nonce: nonce.toString(),          // Convert BigInt to string
-            deadline: deadline.toString()     // Convert BigInt to string
-        };
-
-        const data = {
-            domain: domain,
-            types: types,
-            primaryType: "Permit",
-            message: message
-        };
-
-        const jsonData = JSON.stringify(data, (key, value) =>
-            typeof value === 'bigint' ? value.toString() : value
-        );
-
-        const signature = await web3.currentProvider.request({
-            method: "eth_signTypedData_v4",
-            params: [account, jsonData],
-        });
-
-        const { r, s, v } = splitSignature(signature);
-
-        await contract.methods.permit(account, permitRecipient, permitAmount, deadline, v, r, s).send({ from: account });
-
-        alert("Permit successful, tokens can now be transferred by the recipient");
-
-    } catch (error) {
-        console.error("Permit Transfer Error:", error);
-        alert("Permit functionality failed: " + error.message);
-    }
-}
-
-// Helper function to split signature
-function splitSignature(signature) {
-    return {
-        r: signature.slice(0, 66),
-        s: '0x' + signature.slice(66, 130),
-        v: parseInt(signature.slice(130, 132), 16)
-    };
-}
-
-// Check Allowance for all related accounts
+// 检查授权
 async function checkAllAllowances() {
     if (contract && account) {
-        // Clear existing display
+        // 清空现有的授权信息
         document.getElementById("allowanceInfo").innerHTML = "";
 
-        // Get past Approval events where current account is the spender
+        // 获取当前账户作为 spender 的授权事件
         const approvalEvents = await contract.getPastEvents('Approval', {
-            filter: { spender: account }, // Only fetch events where current account is the spender
-            fromBlock: 0,                 // Start from the first block
-            toBlock: 'latest'             // Up to the latest block
+            filter: { spender: account }, 
+            fromBlock: 0,                 
+            toBlock: 'latest'             
         });
 
-        // Create a Map to store unique owner addresses and their allowances
         const authorizedAccounts = new Map();
 
-        // Process each Approval event
+        // 处理授权事件
         for (let event of approvalEvents) {
             const owner = event.returnValues.owner;
             const allowance = await contract.methods.allowance(owner, account).call();
 
-            // Only add if the allowance is greater than 0
             if (allowance > 0) {
                 const allowanceInEth = web3.utils.fromWei(allowance, 'ether');
-                
-                // Avoid duplicates by using a Map and adding the largest allowance if multiple exist
-                if (!authorizedAccounts.has(owner) || authorizedAccounts.get(owner) < allowanceInEth) {
-                    authorizedAccounts.set(owner, allowanceInEth);
-                }
+                authorizedAccounts.set(owner, allowanceInEth);
             }
         }
 
-        // Display the final list of unique authorized accounts
+        // 显示授权信息
         authorizedAccounts.forEach((allowance, ownerAddress) => {
             displayAllowance(ownerAddress, allowance);
         });
 
-        // Update the "Transfer From" dropdown with authorized accounts
+        // 更新 Transfer From 的授权账户
         updateAuthorizedAccountsDropdown(authorizedAccounts);
     }
 }
 
-// Function to display the allowance info dynamically
+// 显示授权信息
 function displayAllowance(ownerAddress, allowance) {
     const allowanceInfo = document.createElement('div');
     allowanceInfo.innerHTML = `<p>Owner: ${ownerAddress}, Allowance: ${allowance} MTK</p>`;
     document.getElementById("allowanceInfo").appendChild(allowanceInfo);
 }
 
-// Update the "Transfer From" dropdown with authorized accounts
+// 更新授权账户下拉列表
 function updateAuthorizedAccountsDropdown(authorizedAccounts) {
     const dropdown = document.getElementById("authorizedAccounts");
-    dropdown.innerHTML = ""; // Clear the existing dropdown options
+    dropdown.innerHTML = ""; 
 
     authorizedAccounts.forEach((allowance, ownerAddress) => {
         const option = document.createElement("option");
@@ -751,11 +670,11 @@ function updateAuthorizedAccountsDropdown(authorizedAccounts) {
     });
 }
 
-// Transfer From (called by spender using the permit authorization)
+// 使用授权进行转账
 async function transferFrom() {
-    const fromAddress = document.getElementById("authorizedAccounts").value; // Owner address (from dropdown)
-    const toAddress = document.getElementById("toAddress").value;     // Recipient address
-    const transferAmount = web3.utils.toWei(document.getElementById("transferAmount").value, 'ether'); // Amount to transfer
+    const fromAddress = document.getElementById("authorizedAccounts").value;
+    const toAddress = document.getElementById("toAddress").value;
+    const transferAmount = web3.utils.toWei(document.getElementById("transferAmount").value, 'ether'); 
 
     if (contract && account) {
         await contract.methods.transferFrom(fromAddress, toAddress, transferAmount).send({ from: account });
@@ -763,33 +682,14 @@ async function transferFrom() {
     }
 }
 
-// 存钱功能
-async function depositTokens() {
-    const depositAmount = document.getElementById("depositAmount").value;
-
-    if (contract && account) {
-        const amountInWei = web3.utils.toWei(depositAmount, 'ether');
-
-        // 先批准合约使用用户的代币
-        await contract.methods.approve(depositContractAddress, amountInWei).send({ from: account });
-
-        // 调用 deposit 函数将代币存入合约
-        await depositContract.methods.deposit(amountInWei).send({ from: account });
-
-        alert("Deposit successful!");
-    } else {
-        alert("Please connect your wallet first.");
-    }
-}
-
 // 监听账户切换事件
 if (window.ethereum) {
     window.ethereum.on('accountsChanged', async function (accounts) {
         if (accounts.length > 0) {
-            account = accounts[0]; // 更新为新账户
+            account = accounts[0]; 
             document.getElementById("account").innerText = account;
 
-            // 重新初始化合约和刷新页面数据
+            // 刷新页面数据
             await refreshPageData();
         }
     });
@@ -798,14 +698,12 @@ if (window.ethereum) {
 // 页面加载时初始化合约
 document.addEventListener("DOMContentLoaded", async () => {
     await connectWallet();
-    await initDepositContract();  // 初始化存款合约
 });
 
-// Event listeners
+// 事件监听器
 document.getElementById("connectWalletBtn").addEventListener("click", connectWallet);
 document.getElementById("getBalanceBtn").addEventListener("click", getTokenBalance);
 document.getElementById("transferBtn").addEventListener("click", transferTokens);
-document.getElementById("permitBtn").addEventListener("click", permitTransfer);
 document.getElementById("checkAllowanceBtn").addEventListener("click", checkAllAllowances);
 document.getElementById("transferFromBtn").addEventListener("click", transferFrom);
-document.getElementById("depositBtn").addEventListener("click", depositTokens);
+
