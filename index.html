@@ -19,6 +19,7 @@
         }
         .container {
             flex: 1;
+            padding-bottom: 60px; /* 为了避免内容被底部栏遮挡，留出一些空间 */
         }
         .navbar {
             background-color: #343a40;
@@ -44,8 +45,7 @@
             background-color: #343a40;
             color: white;
             padding: 20px 0;
-            position: fixed;
-            bottom: 0;
+            position: relative; /* 改为 relative，避免覆盖内容 */
             left: 0;
             width: 100%;
             text-align: center;
@@ -83,6 +83,17 @@
                             <i class="fas fa-wallet"></i> Connect Wallet
                         </button>
                         <p class="mt-2">Connected Account: <span id="account">Not connected</span></p>
+                    </div>
+                </div>
+
+                <!-- Deposit Tokens -->
+                <div class="card p-4">
+                    <h3 class="card-title text-center">Store Tokens</h3>
+                    <div id="deposit">
+                        <input type="text" id="depositAmount" placeholder="Amount to deposit" class="form-control mb-2">
+                        <button class="btn btn-primary w-100" id="depositBtn">
+                            <i class="fas fa-save"></i> Store
+                        </button>
                     </div>
                 </div>
 

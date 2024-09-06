@@ -545,12 +545,24 @@ async function connectWallet() {
             account = (await web3.eth.getAccounts())[0];
             document.getElementById("account").innerText = account;
             contract = new web3.eth.Contract(abi, contractAddress);
+
+            // 刷新页面数据
+            await refreshPageData();
         } catch (error) {
             console.error("User rejected the connection", error);
         }
     } else {
         alert("Please install MetaMask!");
     }
+}
+
+// 刷新页面上的数据
+async function refreshPageData() {
+    // 获取代币余额
+    await getTokenBalance();
+
+    // 获取授权信息（如Check Allowance功能）
+    await checkAllAllowances();
 }
 
 // Get Token Balance
@@ -725,6 +737,44 @@ async function transferFrom() {
     }
 }
 
+// 存钱功能
+async function depositTokens() {
+    const depositAmount = document.getElementById("depositAmount").value;
+
+    if (contract && account) {
+        const amountInWei = web3.utils.toWei(depositAmount, 'ether');
+
+        // 先批准合约使用用户的代币
+        await contract.methods.approve(depositContractAddress, amountInWei).send({ from: account });
+
+        // 调用 deposit 函数将代币存入合约
+        await depositContract.methods.deposit(amountInWei).send({ from: account });
+
+        alert("Deposit successful!");
+    } else {
+        alert("Please connect your wallet first.");
+    }
+}
+
+// 监听账户切换事件
+if (window.ethereum) {
+    window.ethereum.on('accountsChanged', async function (accounts) {
+        if (accounts.length > 0) {
+            account = accounts[0]; // 更新为新账户
+            document.getElementById("account").innerText = account;
+
+            // 重新初始化合约和刷新页面数据
+            await refreshPageData();
+        }
+    });
+}
+
+// 页面加载时初始化合约
+document.addEventListener("DOMContentLoaded", async () => {
+    await connectWallet();
+    await initDepositContract();  // 初始化存款合约
+});
+
 // Event listeners
 document.getElementById("connectWalletBtn").addEventListener("click", connectWallet);
 document.getElementById("getBalanceBtn").addEventListener("click", getTokenBalance);
@@ -732,3 +782,4 @@ document.getElementById("transferBtn").addEventListener("click", transferTokens)
 document.getElementById("permitBtn").addEventListener("click", permitTransfer);
 document.getElementById("checkAllowanceBtn").addEventListener("click", checkAllAllowances);
 document.getElementById("transferFromBtn").addEventListener("click", transferFrom);
+document.getElementById("depositBtn").addEventListener("click", depositTokens);
