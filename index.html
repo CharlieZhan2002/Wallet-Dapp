@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyToken DApp</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            flex: 1;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand {
+            color: #fff;
+        }
+        .navbar-brand:hover {
+            color: #f8f9fa;
+        }
+        .card {
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+        }
+        .left-section, .right-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card {
+            width: 100%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">MyToken DApp</a>
+        </div>
+    </nav>
+
+    <!-- Main container -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Section: Personal Features -->
+            <div class="col-md-6 left-section">
+                <!-- Wallet Connection -->
+                <div class="card p-4">
+                    <h3 class="card-title text-center">Connect Your Wallet</h3>
+                    <div id="wallet" class="text-center mb-3">
+                        <button class="btn btn-primary" id="connectWalletBtn">
+                            <i class="fas fa-wallet"></i> Connect Wallet
+                        </button>
+                        <p class="mt-2">Connected Account: <span id="account">Not connected</span></p>
+                    </div>
+                </div>
+
+                <!-- Token Balance -->
+                <div class="card p-4">
+                    <h3 class="card-title text-center">Your Token Balance</h3>
+                    <div id="balance" class="text-center mb-3">
+                        <p><span id="tokenBalance">0</span> MTK</p>
+                        <button class="btn btn-info" id="getBalanceBtn">
+                            <i class="fas fa-coins"></i> Check Balance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Transfer Tokens -->
+                <div class="card p-4">
+                    <h3 class="card-title text-center">Transfer Tokens</h3>
+                    <div id="transfer">
+                        <input type="text" id="recipient" placeholder="Recipient Address" class="form-control mb-2">
+                        <input type="text" id="amount" placeholder="Amount" class="form-control mb-2">
+                        <button class="btn btn-success w-100" id="transferBtn">
+                            <i class="fas fa-paper-plane"></i> Transfer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Permit Token Transfer -->
+                <div class="card p-4">
+                    <h3 class="card-title text-center">Permit Token Transfer</h3>
+                    <div id="permit">
+                        <input type="text" id="permitRecipient" placeholder="Recipient Address" class="form-control mb-2">
+                        <input type="text" id="permitAmount" placeholder="Amount" class="form-control mb-2">
+                        <button class="btn btn-warning w-100" id="permitBtn">
+                            <i class="fas fa-shield-alt"></i> Permit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section: Transfer From Features -->
+            <div class="col-md-6 right-section">
+                <!-- Check Allowance -->
+                <div class="card p-4">
+                    <h3 class="card-title text-center">Check Allowance</h3>
+                    <button class="btn btn-info w-100 mb-2" id="checkAllowanceBtn">
+                        <i class="fas fa-search"></i> Check Allowance
+                    </button>
+                    <div id="allowanceInfo" class="text-center"></div>
+                </div>
+
+                <!-- Transfer From -->
+                <div class="card p-4">
+                    <h3 class="card-title text-center">Transfer From (Spender)</h3>
+                    <div id="transferFrom">
+                        <select id="authorizedAccounts" class="form-control mb-2">
+                            <!-- Dynamically populated with authorized accounts -->
+                        </select>
+                        <input type="text" id="toAddress" placeholder="Recipient Address" class="form-control mb-2">
+                        <input type="text" id="transferAmount" placeholder="Amount" class="form-control mb-2">
+                        <button class="btn btn-success w-100" id="transferFromBtn">
+                            <i class="fas fa-exchange-alt"></i> Transfer From
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>MyToken DApp © 2024</p>
+    </div>
+
+    <!-- Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
